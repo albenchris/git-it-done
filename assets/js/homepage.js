@@ -36,9 +36,12 @@ function displayRepos(repos, searchTerm) {
         // format repo name
         var repoName = repos[i].owner.login + "/" + repos[i].name;
         // create a container for each repo
-        var repoEl = document.createElement("div");
+        
+        // create a container for each repo
+        var repoEl = document.createElement("a");
         repoEl.classList = "list-item flex-row justify-space-between align-center";
-
+        repoEl.setAttribute("href", "./single-repo.html?repo=" + repoName);
+        
         // create a span element to hold repository name
         var titleEl = document.createElement("span");
         titleEl.textContent = repoName;
@@ -62,7 +65,7 @@ function displayRepos(repos, searchTerm) {
         repoEl.appendChild(statusEl);
 
         // append container to the dom
-        repoContainerEl.appendChild(repoEl);
+        repoContainerEl.appendChild(repoEl); 
     }
 
     // console.log(repos);
@@ -76,7 +79,9 @@ function getUserRepos(user) {
     // make a request to the url
     fetch(apiUrl).then(function(response) {
         if (response.ok) {
+            // console.log(response);
             response.json().then(function(data) {
+                // console.log(data);
                 displayRepos(data, user);
             });
         } else {

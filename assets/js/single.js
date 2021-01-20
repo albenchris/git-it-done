@@ -1,5 +1,25 @@
-
+var repoNameEl = document.querySelector("#repo-name");
 var issueContainerEl = document.querySelector("#issues-container");
+var limitWarningEl = document.querySelector("#limit-warning");
+
+function getRepoName() {
+    var queryString = document.location.search;
+    var repoName = queryString.split("=")[1];
+    getRepoIssues(repoName);
+    repoNameEl.textContent = repoName;
+};
+
+function displayWarning(repo) {
+    // add text to warning container
+    limitWarningEl.textContent = "To see more than 30 issues, visit ";
+
+    var linkEl = document.createElement("a");
+    linkEl.textContent = "See more Issues on GitHub.com";
+    linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
+    linkEl.setAttribute("target", "_blank");
+    // append to warning container
+    limitWarningEl.appendChild(linkEl);
+};
 
 function displayIssues(issues) {
     if (issues.length === 0) {
@@ -7,6 +27,7 @@ function displayIssues(issues) {
         return;
     }
 
+    // loop over given issues
     for (var i=0; i<issues.length; i++) {
         // create a link element to take users to the issue on GitHub
         var issueEl = document.createElement("a");
@@ -44,12 +65,18 @@ function getRepoIssues(repo) {
             response.json().then(function(data) {
                 // pass response data to dom function
                 displayIssues(data);
+
+                // check if api has paginated issues
+                if (response.headers.get("Link")) {
+                    displayWarning(repo);
+                }
             });
         } else {
-            alert("There was a problem with your request!");
+            document.location.replace("./index.html");
         }
     });
     // console.log(repo);
 };
 
-getRepoIssues("albenchris/robot-gladiators");
+getRepoName();
+// getRepoIssues();
